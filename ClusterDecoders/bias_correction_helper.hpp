@@ -5,6 +5,8 @@
 //  Created by Jon San Miguel on 8/16/21.
 //
 
+//helper class for correcting Z only errors. Corrects errors with fractal like operators.
+
 #ifndef bias_correction_helper_hpp
 #define bias_correction_helper_hpp
 
@@ -14,7 +16,13 @@
 class bias_correction_helper {
 public:
     bias_correction_helper(int w, int h, char stabilizer);
+    
+    //checks which errors are correctable with only Z operators. Returns true if all errors in
+    //the cluster are correctable with only Z operators. Does preprocessing for correct_cluster.
     bool check_cluster(std::vector<std::pair<int,int>>& cluster, std::vector<int>& rect);
+    
+    //applies Z operator to correction_Z to correct errors, then removes those syndromes from cluster.
+    //always need to call check_cluster first.
     void correct_cluster(std::vector<std::pair<int,int>>& cluster, boost::multi_array<int, 2>& correction_Z);
     
 private:
