@@ -12,8 +12,9 @@
 
 using namespace std;
 
-//currently set up to run a threshold simulation, and output time. Takes one or two command line arguments.
-//first the # of averages to take. second (optional) filename to output to.
+//currently set up to run a thermal memory time simulation, and output lifetime. Takes
+//one or two command line arguments. First is the # of averages to take. Second (optional)
+//is the filename to output to.
 int main(int argc, const char * argv[]) {
     string filename = "";
     int samples = atoi(argv[1]);
