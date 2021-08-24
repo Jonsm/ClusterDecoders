@@ -7,7 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FC4970EB26CB063A000724A3 /* bias_correction_helper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC4970E926CB063A000724A3 /* bias_correction_helper.cpp */; };
+		FC4970EF26D2E0AF000724A3 /* random_discrete_array.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC4970ED26D2E0AF000724A3 /* random_discrete_array.cpp */; };
+		FC4970F326D318F9000724A3 /* thermal_bias_sim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC4970F126D318F9000724A3 /* thermal_bias_sim.cpp */; };
+		FC81C4AF26C6EA1C00701D8E /* threshold_sim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC81C4AD26C6EA1C00701D8E /* threshold_sim.cpp */; };
+		FCDBEB5626BB334400C5A695 /* clustering_helper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCDBEB5426BB334400C5A695 /* clustering_helper.cpp */; };
 		FCF6370E26BB12670021EFB9 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCF6370D26BB12670021EFB9 /* main.cpp */; };
+		FCF6371726BB13A30021EFB9 /* cluster_decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCF6371526BB13A30021EFB9 /* cluster_decoder.cpp */; };
+		FCF6371C26BB14DA0021EFB9 /* stabilizer_lattice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCF6371A26BB14DA0021EFB9 /* stabilizer_lattice.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -23,8 +30,23 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		FC4970E926CB063A000724A3 /* bias_correction_helper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = bias_correction_helper.cpp; sourceTree = "<group>"; };
+		FC4970EA26CB063A000724A3 /* bias_correction_helper.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = bias_correction_helper.hpp; sourceTree = "<group>"; };
+		FC4970ED26D2E0AF000724A3 /* random_discrete_array.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = random_discrete_array.cpp; sourceTree = "<group>"; };
+		FC4970EE26D2E0AF000724A3 /* random_discrete_array.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = random_discrete_array.hpp; sourceTree = "<group>"; };
+		FC4970F126D318F9000724A3 /* thermal_bias_sim.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = thermal_bias_sim.cpp; sourceTree = "<group>"; };
+		FC4970F226D318F9000724A3 /* thermal_bias_sim.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = thermal_bias_sim.hpp; sourceTree = "<group>"; };
+		FC81C4AD26C6EA1C00701D8E /* threshold_sim.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = threshold_sim.cpp; sourceTree = "<group>"; };
+		FC81C4AE26C6EA1C00701D8E /* threshold_sim.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = threshold_sim.hpp; sourceTree = "<group>"; };
+		FCDBEB5426BB334400C5A695 /* clustering_helper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = clustering_helper.cpp; sourceTree = "<group>"; };
+		FCDBEB5526BB334400C5A695 /* clustering_helper.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = clustering_helper.hpp; sourceTree = "<group>"; };
 		FCF6370A26BB12670021EFB9 /* ClusterDecoders */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ClusterDecoders; sourceTree = BUILT_PRODUCTS_DIR; };
 		FCF6370D26BB12670021EFB9 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		FCF6371526BB13A30021EFB9 /* cluster_decoder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cluster_decoder.cpp; sourceTree = "<group>"; };
+		FCF6371626BB13A30021EFB9 /* cluster_decoder.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cluster_decoder.hpp; sourceTree = "<group>"; };
+		FCF6371926BB14000021EFB9 /* paulis.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = paulis.hpp; sourceTree = "<group>"; };
+		FCF6371A26BB14DA0021EFB9 /* stabilizer_lattice.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = stabilizer_lattice.cpp; sourceTree = "<group>"; };
+		FCF6371B26BB14DA0021EFB9 /* stabilizer_lattice.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = stabilizer_lattice.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +80,21 @@
 			isa = PBXGroup;
 			children = (
 				FCF6370D26BB12670021EFB9 /* main.cpp */,
+				FCF6371926BB14000021EFB9 /* paulis.hpp */,
+				FC4970F126D318F9000724A3 /* thermal_bias_sim.cpp */,
+				FC4970F226D318F9000724A3 /* thermal_bias_sim.hpp */,
+				FC4970ED26D2E0AF000724A3 /* random_discrete_array.cpp */,
+				FC4970EE26D2E0AF000724A3 /* random_discrete_array.hpp */,
+				FC81C4AD26C6EA1C00701D8E /* threshold_sim.cpp */,
+				FC81C4AE26C6EA1C00701D8E /* threshold_sim.hpp */,
+				FCF6371526BB13A30021EFB9 /* cluster_decoder.cpp */,
+				FCF6371626BB13A30021EFB9 /* cluster_decoder.hpp */,
+				FC4970E926CB063A000724A3 /* bias_correction_helper.cpp */,
+				FC4970EA26CB063A000724A3 /* bias_correction_helper.hpp */,
+				FCF6371A26BB14DA0021EFB9 /* stabilizer_lattice.cpp */,
+				FCF6371B26BB14DA0021EFB9 /* stabilizer_lattice.hpp */,
+				FCDBEB5426BB334400C5A695 /* clustering_helper.cpp */,
+				FCDBEB5526BB334400C5A695 /* clustering_helper.hpp */,
 			);
 			path = ClusterDecoders;
 			sourceTree = "<group>";
@@ -118,7 +155,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FC4970F326D318F9000724A3 /* thermal_bias_sim.cpp in Sources */,
 				FCF6370E26BB12670021EFB9 /* main.cpp in Sources */,
+				FCDBEB5626BB334400C5A695 /* clustering_helper.cpp in Sources */,
+				FC4970EF26D2E0AF000724A3 /* random_discrete_array.cpp in Sources */,
+				FC4970EB26CB063A000724A3 /* bias_correction_helper.cpp in Sources */,
+				FCF6371C26BB14DA0021EFB9 /* stabilizer_lattice.cpp in Sources */,
+				FCF6371726BB13A30021EFB9 /* cluster_decoder.cpp in Sources */,
+				FC81C4AF26C6EA1C00701D8E /* threshold_sim.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -240,6 +284,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				"HEADER_SEARCH_PATHS[arch=*]" = /usr/local/Cellar/boost/1.76.0/include;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -248,6 +294,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				"HEADER_SEARCH_PATHS[arch=*]" = /usr/local/Cellar/boost/1.76.0/include;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

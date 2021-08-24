@@ -6,9 +6,38 @@
 //
 
 #include <iostream>
+#include <chrono>
+#include "threshold_sim.hpp"
+#include "thermal_bias_sim.hpp"
 
+using namespace std;
+
+//currently set up to run a threshold simulation, and output time. Takes one or two command line arguments.
+//first the # of averages to take. second (optional) filename to output to.
 int main(int argc, const char * argv[]) {
-    // insert code here...
-    std::cout << "Hello, World!\n";
+    string filename = "";
+    int samples = atoi(argv[1]);
+    if (argc == 3) {
+        filename = argv[2];
+    }
+
+    //system sizes
+    vector<pair<int,int>> dims {pair<int,int>(6,9),pair<int,int>(12,15),pair<int,int>(24,27),pair<int,int>(48,51),pair<int,int>(96,99),pair<int,int>(192,195)};
+    //approximate time intervals to check for logical errors
+    vector<double> strides {1000,1000,1000,1000,1000,1000};
+    //temperatures
+    vector<float> Ts {0.2,0.25};
+    
+    auto t1 = chrono::high_resolution_clock::now();
+    auto timenow =
+          chrono::system_clock::to_time_t(chrono::system_clock::now());
+    cout << ctime(&timenow) << endl;
+    
+    thermal_bias_sim::lifetime_sim(samples, strides, dims, Ts, filename);
+    
+    auto t2 = chrono::high_resolution_clock::now();
+    chrono::duration<double> dur = std::chrono::duration_cast<chrono::duration<double>>(t2 - t1);
+    cout << dur.count() << endl;
+    
     return 0;
 }
