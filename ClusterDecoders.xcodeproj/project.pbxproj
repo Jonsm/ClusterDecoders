@@ -67,6 +67,7 @@
 		FCF6370126BB12670021EFB9 = {
 			isa = PBXGroup;
 			children = (
+				FCDEDF0626E59EA700FD1764 /* README.md */,
 				FCF6370C26BB12670021EFB9 /* ClusterDecoders */,
 				FCF6370B26BB12670021EFB9 /* Products */,
 			);
@@ -86,7 +87,6 @@
 				FCF6370D26BB12670021EFB9 /* main.cpp */,
 				FCF6371926BB14000021EFB9 /* paulis.hpp */,
 				FCDEDF0126D99B6400FD1764 /* ca_sim.cpp */,
-				FCDEDF0626E59EA700FD1764 /* README.md */,
 				FCDEDF0226D99B6400FD1764 /* ca_sim.hpp */,
 				FC4970F126D318F9000724A3 /* thermal_bias_sim.cpp */,
 				FC4970F226D318F9000724A3 /* thermal_bias_sim.hpp */,
