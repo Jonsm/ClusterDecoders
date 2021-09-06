@@ -9,6 +9,8 @@
 
 using namespace std;
 
+//probs = array of weights an item can have. l = number of items. Items start
+//assigned to probs[0]
 random_discrete_array::random_discrete_array(vector<float> probs, int l) :
 n_per_prob(probs.size()),
 index_to_prob(l),
@@ -31,6 +33,7 @@ dis(0.0, 1.0)
     }
 }
 
+//change the weight assigned to item i to weight at probs[prob_index]
 void random_discrete_array::assign(int i, int prob_index) {
     int former_prob_index = index_to_prob[i];
     int former_index = index_to_index[i];
@@ -46,6 +49,7 @@ void random_discrete_array::assign(int i, int prob_index) {
     index_to_index[i] =  n_per_prob[prob_index] - 1;
 }
 
+//get a random item with probability proportional to its weight
 int random_discrete_array::get_random() {
     float R = 0;
     for (int i = 0; i < probs.size(); i++) {
@@ -69,6 +73,7 @@ int random_discrete_array::get_random() {
     return prob_to_index[prob_index][index];
 }
 
+//return the sum of all weights
 float random_discrete_array::total_prob() {
     float R = 0;
     for (int i = 0; i < probs.size(); i++) {

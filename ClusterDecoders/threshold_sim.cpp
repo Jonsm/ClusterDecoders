@@ -11,6 +11,13 @@
 
 using namespace std;
 
+/*
+ **w,h = dims
+ **bias = array of {pI,px,py,pz}
+ **give_up = whether the RG decoder should report failure if clusters are larger than min(w,h)/2
+ **reduce_weight = whether decoder should reduce weight of correction by multiplying with stabilizers
+   (good for debugging)
+ */
 threshold_sim::threshold_sim(int w, int h, vector<float> bias, bool give_up, bool reduce_weight) :
 w(w),
 h(h),
@@ -25,6 +32,7 @@ bias_cumulative(4)
     engine.seed(random_device{}());
 }
 
+//flips qubits at x,y in both sublattices, with error probabilites given by bias
 void threshold_sim::single_qubit_channel(int x, int y) {
     for (int sublattice = 1; sublattice <= 2; sublattice++) {
         float p_flip = dis(engine);
@@ -38,6 +46,7 @@ void threshold_sim::single_qubit_channel(int x, int y) {
     }
 }
 
+//flip all qubits and then check if decoding is successful
 bool threshold_sim::single_run() {
     decoder.clear();
     for (int x = 0; x < w; x++) {
@@ -63,6 +72,17 @@ void threshold_sim::debug() {
     cout << "########################" << endl << endl;
 }
 
+/*
+ Outputs data to determine the threshold of the decoder.
+ **dims = array of pairs w,h
+ **normalized_bias = array {px,py,pz} normalized to add up to 1
+ **p_start,p_stop,p_steps = range and # of steps to check error rate p, where p=px+py+pz
+ **samples = number of samples
+ **filename = file to output to. Leave "" for no output
+ **give_up = whether decoder reports failure if clusters are larger than min(w,h)/2
+ **reduce_weight = whether decoder should reduce weight of correction by multiplying with stabilizers
+ (good for debugging)
+ */
 void threshold_sim::run_sim(std::vector<std::pair<int, int> > &dims, std::vector<float> normalized_bias, float p_start, float p_stop, int p_steps, int samples, std::string filename, bool give_up, bool reduce_weight) {
     ofstream file;
     if (filename != "") {

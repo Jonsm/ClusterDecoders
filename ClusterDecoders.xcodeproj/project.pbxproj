@@ -12,6 +12,7 @@
 		FC4970F326D318F9000724A3 /* thermal_bias_sim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC4970F126D318F9000724A3 /* thermal_bias_sim.cpp */; };
 		FC81C4AF26C6EA1C00701D8E /* threshold_sim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC81C4AD26C6EA1C00701D8E /* threshold_sim.cpp */; };
 		FCDBEB5626BB334400C5A695 /* clustering_helper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCDBEB5426BB334400C5A695 /* clustering_helper.cpp */; };
+		FCDEDF0326D99B6400FD1764 /* ca_sim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCDEDF0126D99B6400FD1764 /* ca_sim.cpp */; };
 		FCF6370E26BB12670021EFB9 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCF6370D26BB12670021EFB9 /* main.cpp */; };
 		FCF6371726BB13A30021EFB9 /* cluster_decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCF6371526BB13A30021EFB9 /* cluster_decoder.cpp */; };
 		FCF6371C26BB14DA0021EFB9 /* stabilizer_lattice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCF6371A26BB14DA0021EFB9 /* stabilizer_lattice.cpp */; };
@@ -40,6 +41,8 @@
 		FC81C4AE26C6EA1C00701D8E /* threshold_sim.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = threshold_sim.hpp; sourceTree = "<group>"; };
 		FCDBEB5426BB334400C5A695 /* clustering_helper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = clustering_helper.cpp; sourceTree = "<group>"; };
 		FCDBEB5526BB334400C5A695 /* clustering_helper.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = clustering_helper.hpp; sourceTree = "<group>"; };
+		FCDEDF0126D99B6400FD1764 /* ca_sim.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ca_sim.cpp; sourceTree = "<group>"; };
+		FCDEDF0226D99B6400FD1764 /* ca_sim.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ca_sim.hpp; sourceTree = "<group>"; };
 		FCF6370A26BB12670021EFB9 /* ClusterDecoders */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ClusterDecoders; sourceTree = BUILT_PRODUCTS_DIR; };
 		FCF6370D26BB12670021EFB9 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		FCF6371526BB13A30021EFB9 /* cluster_decoder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cluster_decoder.cpp; sourceTree = "<group>"; };
@@ -81,6 +84,8 @@
 			children = (
 				FCF6370D26BB12670021EFB9 /* main.cpp */,
 				FCF6371926BB14000021EFB9 /* paulis.hpp */,
+				FCDEDF0126D99B6400FD1764 /* ca_sim.cpp */,
+				FCDEDF0226D99B6400FD1764 /* ca_sim.hpp */,
 				FC4970F126D318F9000724A3 /* thermal_bias_sim.cpp */,
 				FC4970F226D318F9000724A3 /* thermal_bias_sim.hpp */,
 				FC4970ED26D2E0AF000724A3 /* random_discrete_array.cpp */,
@@ -156,6 +161,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FC4970F326D318F9000724A3 /* thermal_bias_sim.cpp in Sources */,
+				FCDEDF0326D99B6400FD1764 /* ca_sim.cpp in Sources */,
 				FCF6370E26BB12670021EFB9 /* main.cpp in Sources */,
 				FCDBEB5626BB334400C5A695 /* clustering_helper.cpp in Sources */,
 				FC4970EF26D2E0AF000724A3 /* random_discrete_array.cpp in Sources */,

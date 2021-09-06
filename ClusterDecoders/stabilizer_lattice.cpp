@@ -12,6 +12,14 @@
 
 using namespace std;
 
+/*
+ **w,h = dims
+ **bias = array of {pI,px,py,pz} (currently unused)
+ **stabilizer = which type of stabilizer errors to correct, A or B
+ **give_up = whether the RG decoder should report failure if clusters are larger than max(w,h)/2
+ **reduce_weight = whether decoder should reduce weight of correction by multiplying with stabilizers
+   (good for debugging)
+ */
 stabilizer_lattice::stabilizer_lattice(int w, int h, vector<float> bias, char stabilizer, bool give_up, bool reduce_weight) :
 w(w),
 h(h),
@@ -40,6 +48,7 @@ bias_correction(w, h, stabilizer)
     }
 }
 
+//flips a qubit at site x,y. z = whether Pauli error was a Z error.
 void stabilizer_lattice::flip(int x, int y, bool z) {
     if (z) {
         errors_Z[x][y] ^= 1;
@@ -58,6 +67,8 @@ void stabilizer_lattice::flip(int x, int y, bool z) {
     }
 }
 
+//checks if the error is correctable with arbitrary (unbiased) Pauli operator, by checking parity on
+//each colored hexagon
 bool stabilizer_lattice::no_bias_correctable(vector<pair<int, int> > &cluster, vector<int> &rect) {
     int colors[3] = {0,0,0};
     for (const pair<int,int>& coord : cluster) {
@@ -70,7 +81,7 @@ bool stabilizer_lattice::no_bias_correctable(vector<pair<int, int> > &cluster, v
     return (colors[0] % 2 == colors[1] % 2) && (colors[1] % 2 == colors[2] % 2);
 }
 
-
+//checks if the error is correctable, or if give_up is true, returns false if the error is too large
 bool stabilizer_lattice::correctable(vector<pair<int, int> > &cluster, vector<int> &rect) {
     if (give_up && (rect[2] >= w/2 || rect[3] >= h/2)) {
         return false;
@@ -79,6 +90,7 @@ bool stabilizer_lattice::correctable(vector<pair<int, int> > &cluster, vector<in
     return no_bias_correctable(cluster, rect);
 }
 
+//apply a Pauli that removes the error syndrome
 void stabilizer_lattice::attempt_correction(vector<pair<int,int>>& cluster, vector<int> &rect) {
     if (rect[2] < w/2 && rect[3] < h/2) {
         bias_correction.check_cluster(cluster, rect);
@@ -89,6 +101,7 @@ void stabilizer_lattice::attempt_correction(vector<pair<int,int>>& cluster, vect
     }
 }
 
+//move an error syndrome to the left (to x_dest)
 pair<int,int> stabilizer_lattice::string_clean_x(int x_src, int y_src, int x_dest) {
     int current_x = x_src;
     int current_y = y_src;
@@ -120,6 +133,7 @@ pair<int,int> stabilizer_lattice::string_clean_x(int x_src, int y_src, int x_des
     return pair<int,int>(current_x,current_y);
 }
 
+//move an error syndrome up (to y_dest)
 void stabilizer_lattice::string_clean_y(int x_src, int y_src, int x_dest, int y_dest) {
     int current_y = y_src;
     int step = 0;
@@ -153,11 +167,13 @@ void stabilizer_lattice::string_clean_y(int x_src, int y_src, int x_dest, int y_
     }
 }
 
+//move an error to point x_dest,y_dest using a stringlike operator
 void stabilizer_lattice::string_clean(int x_src, int y_src, int x_dest, int y_dest) {
     pair<int,int> x_cleaned = string_clean_x(x_src, y_src, x_dest);
     string_clean_y(x_cleaned.first, x_cleaned.second, x_dest, y_dest);
 }
 
+//correct an error with stringlike operators by moving all errors to the top right of the rect
 void stabilizer_lattice::no_bias_correction(std::vector<std::pair<int, int> > &cluster, std::vector<int> &rect) {
     pair<int,int> dests[3];
     int tl_x = rect[0];
@@ -186,6 +202,12 @@ void stabilizer_lattice::no_bias_correction(std::vector<std::pair<int, int> > &c
     }
 }
 
+/*
+ * Try to correct the error. First get clusters. Check if each cluster is correctable, then try to
+ * correct first with a Z-only correction operator, and then with a general operator. Repeat with
+ * larger cluster sizes until all errors are corrected, or if give_up is true, clusters become
+ * larger than min(w,h)/2. In that case return false, else true.
+ */
 bool stabilizer_lattice::make_correction() {
     fill(correction_Z.data(), correction_Z.data()+correction_Z.num_elements(), 0);
     fill(correction_not_Z.data(), correction_not_Z.data()+correction_not_Z.num_elements(), 0);
@@ -230,6 +252,7 @@ bool stabilizer_lattice::make_correction() {
     return false;
 }
 
+// optional: try to make the correction operator have smaller weight by acting with stabilizers.
 void stabilizer_lattice::reduce_stabilizer_weight() {
     int n_passes = 3;
     boost::multi_array<int, 2>* correction_1 = &(correction_Z);
@@ -266,6 +289,7 @@ void stabilizer_lattice::reduce_stabilizer_weight() {
     }
 }
 
+//for debugging, check if any stabilizers are violated.
 bool stabilizer_lattice::check_stabilizers() {
     boost::multi_array<int, 2>* correction_1 = &(correction_Z);
     boost::multi_array<int, 2>* correction_2 = &(correction_not_Z);
@@ -302,6 +326,7 @@ bool stabilizer_lattice::check_stabilizers() {
     return true;
 }
 
+//check if any logical errors are violated. If so correction failed.
 bool stabilizer_lattice::check_logicals() {
     boost::multi_array<int, 2>* correction_1 = &(correction_Z);
     boost::multi_array<int, 2>* correction_2 = &(correction_not_Z);
@@ -345,10 +370,12 @@ bool stabilizer_lattice::check_logicals() {
     return (red_h == 0 && blue_h == 0 && red_v == 0 && blue_v == 0);
 }
 
+//check if the correction did not violate stabilizers or logicals
 bool stabilizer_lattice::check_correction() {
     return check_stabilizers() && check_logicals();
 }
 
+//reset the qubits on the lattice so a new simulation can be performed
 void stabilizer_lattice::clear() {
     fill(errors_Z.data(), errors_Z.data()+errors_Z.num_elements(), 0);
     fill(errors_not_Z.data(), errors_not_Z.data()+errors_not_Z.num_elements(), 0);

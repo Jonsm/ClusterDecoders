@@ -27,6 +27,8 @@ delta(boost::extents[w][h][8])
     dir_pairs = vector<pair<int,int>>{pair<int,int>(0,-1),pair<int,int>(-1,-1),pair<int,int>(-1,0),pair<int,int>(-1,1),pair<int,int>(0,1),pair<int,int>(1,1),pair<int,int>(1,0),pair<int,int>(1,-1)};
 }
 
+//gets delta(i,j) for regions i,j as described in https://arxiv.org/pdf/1112.3252.pdf. I.e.
+//whether they are part of the same cluster.
 void clustering_helper::get_delta(boost::multi_array<int, 2> &syndromes) {
     fill(lr_bounds.data(), lr_bounds.data()+lr_bounds.num_elements(), 0);
     fill(ll_bounds.data(), ll_bounds.data()+ll_bounds.num_elements(), 0);
@@ -46,6 +48,7 @@ void clustering_helper::get_delta(boost::multi_array<int, 2> &syndromes) {
     }
 }
 
+//checks if regions with same x or y are in the same cluster
 void clustering_helper::get_delta_vh(int x, int y) {
     if (already_clustered[x][y]) {
         return;
@@ -68,6 +71,7 @@ void clustering_helper::get_delta_vh(int x, int y) {
     }
 }
 
+//checks if regions touching diagonally are in the same cluster
 void clustering_helper::get_delta_diagonal(boost::multi_array<int, 2> &syndromes, int idx, int idy) {
     int x_tr = (idx + 1) % w_coarse;
     int x_tl = (idx - 1 + w_coarse) % w_coarse;
@@ -84,7 +88,6 @@ void clustering_helper::get_delta_diagonal(boost::multi_array<int, 2> &syndromes
     bool found_tl = already_clustered[x_tl][y_top];
     bool found_tr = already_clustered[x_tr][y_top];
 
-    
     for (int x = 0; x < w_c; x++) {
         for (int y = 0; y < h_c; y++) {
             if (found_tl && found_tr) {
@@ -114,6 +117,8 @@ void clustering_helper::get_delta_diagonal(boost::multi_array<int, 2> &syndromes
     }
 }
 
+//helper for getting delta, checks the region (box), finds location of syndromes in the region and
+//neighboring regions
 void clustering_helper::preprocess_box_delta(boost::multi_array<int, 2> &syndromes, int idx, int idy) {
     int top, left, box_w, box_h;
     coord_to_rect(idx, idy, top, left, box_w, box_h);
@@ -187,6 +192,15 @@ void clustering_helper::preprocess_box_delta(boost::multi_array<int, 2> &syndrom
     }
 }
 
+/*
+finds clusters as in https://arxiv.org/pdf/1112.3252.pdf, i.e. maximal regions of syndromes
+with distance no more than 2^level from some other syndrome.
+ ** syndromes = input syndromes
+ ** clusters = vector to output clusters, where each vector of pairs is a cluster
+ ** rects = vector to output rects, where each rect is a bounding box of cluster at same position
+    in clusters. rect is a vector of {top left, top right, width, height}
+ ** level = max distance of elements from all other elements in cluster
+ */
 void clustering_helper::get_clusters(boost::multi_array<int, 2> &syndromes, vector<vector<pair<int, int>>> &clusters, vector<vector<int>> &rects, int level) {
     
     r = pow(2, level);
@@ -226,6 +240,7 @@ void clustering_helper::get_clusters(boost::multi_array<int, 2> &syndromes, vect
     clusters.pop_back();
 }
 
+//visit a region in BFS
 void clustering_helper::visit(boost::multi_array<int, 2> &syndromes, pair<int,int> coord, vector<pair<int,int>>& current_cluster) {
     if (already_clustered[coord.first][coord.second]) {
         return;
@@ -239,6 +254,7 @@ void clustering_helper::visit(boost::multi_array<int, 2> &syndromes, pair<int,in
     }
 }
 
+//special case of visit for r = 1 (reduces to just checking adjacency)
 void clustering_helper::visit_r1(boost::multi_array<int, 2> &syndromes, pair<int, int> coord, vector<pair<int, int> > &current_cluster) {
     if (syndromes[coord.first][coord.second] == 0) {
         return;
@@ -258,6 +274,7 @@ void clustering_helper::visit_r1(boost::multi_array<int, 2> &syndromes, pair<int
     }
 }
 
+//visit regions larger than 1 site
 void clustering_helper::visit_r_larger(boost::multi_array<int, 2> &syndromes, std::pair<int, int> coord, std::vector<std::pair<int, int> > &current_cluster) {
     int top, left, box_w, box_h;
     coord_to_rect(coord.first, coord.second, top, left, box_w, box_h);
@@ -278,6 +295,7 @@ void clustering_helper::visit_r_larger(boost::multi_array<int, 2> &syndromes, st
     }
 }
 
+//gets the rect of region given by coord x,y
 void clustering_helper::coord_to_rect(int x, int y, int &top, int &left, int &rect_w, int &rect_h) {
     top = y * r;
     left = x * r;
@@ -287,10 +305,12 @@ void clustering_helper::coord_to_rect(int x, int y, int &top, int &left, int &re
     rect_w = right_edge - left;
 }
 
+//sorting method for pairs which sorts by second element (ie y coord)
 bool sort_second(const pair<int,int> &a, const pair<int,int> &b) {
     return (a.second < b.second);
 }
 
+//gets the rect for a cluster
 void clustering_helper::get_size(vector<std::pair<int, int>> &cluster, vector<int> &rect) {
     sort(cluster.begin(), cluster.end());
     int max_x_gap = (cluster[0].first - cluster.back().first + w) % w - 1;

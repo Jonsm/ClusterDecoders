@@ -12,16 +12,19 @@
 
 using namespace std;
 
+//create array of transition rates for qubits, depending on which neighbors are flipped
 vector<float> get_unique_gammas(float T) {
     std::vector<float> unique_gammas;
-    float beta = 1.0 / T;
-    for (int omega = -3; omega <= 3; omega += 2) {
-        float gamma = omega / (1 - exp(-beta * omega));
+    double beta = 1.0 / T;
+    for (double omega = -3; omega <= 3; omega += 2) {
+        double gamma = omega / (1.0 - exp(-beta * omega));
         unique_gammas.push_back(gamma);
     }
     return unique_gammas;
 }
 
+//w,h = dims, T = temperature, stabilizer = which stabilizer to simulate. shares decoder with
+//a thermal_bias_sim for the other stabilizer
 thermal_bias_sim::thermal_bias_sim(int w, int h, float T, char stabilizer, cluster_decoder* decoder) :
 w(w),
 h(h),
@@ -41,8 +44,13 @@ dis(0.0,1.0)
     }
     
     R = rd_array.total_prob();
+    for (int i = 0; i < 4; i++) {
+        
+    }
 }
 
+//act with the error channel for a time no smaller than t_evol. Returns the time of
+//the first flip after t_evol
 double thermal_bias_sim::mc_time(double t_evol) {
     double t_diff = 0;
     
@@ -55,6 +63,7 @@ double thermal_bias_sim::mc_time(double t_evol) {
     return t;
 }
 
+//wait a time given by exponential distribution
 double thermal_bias_sim::wait_rand_time() {
     float r = 1.0 - dis(engine);
     while (r == 0) {
@@ -65,6 +74,7 @@ double thermal_bias_sim::wait_rand_time() {
     return delta_T;
 }
 
+//flip a random qubit, where qubits are more likely to be flipped if energy is reduced
 void thermal_bias_sim::make_flip() {
     pair<int,int> coord = rand_site();
     int x = coord.first;
@@ -97,6 +107,7 @@ void thermal_bias_sim::make_flip() {
     decoder->flip(x,y,sublattice,Z);
 }
 
+//find a random site, where the site is more likely to be picked if flipping it reduces energy
 pair<int,int> thermal_bias_sim::rand_site() {
     int ind = rd_array.get_random();
     int x = ind % w;
@@ -104,6 +115,14 @@ pair<int,int> thermal_bias_sim::rand_site() {
     return pair<int, int>(x,y);
 }
 
+/*
+ Runs a simulation to find lifetime with thermal Z noise. Method from sec. 3 of https://arxiv.org/pdf/1411.6643.pdf. Outputs first time of logical failure.
+ **avg: number of samples
+ **dims: array of w,h pairs
+ **strides: array of float t, where t is the interval at which to check for logical errors. One per size
+ **Ts: array of temperatures
+ **filename: file to output to. use "" to not output to file
+ */
 void thermal_bias_sim::lifetime_sim(int average, std::vector<double> &strides, std::vector<std::pair<int, int> > &dims, std::vector<float> &Ts, std::string filename) {
     bool output_to_file = (filename != "");
     

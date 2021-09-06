@@ -5,7 +5,8 @@
 //  Created by Jon San Miguel on 8/4/21.
 //
 
-//helper class to find clusters in an array of stabilizer syndromes.
+//helper class to find clusters in an array of stabilizer syndromes. Works as described in
+//sec VI of https://arxiv.org/pdf/1112.3252.pdf
 
 #ifndef clustering_helper_hpp
 #define clustering_helper_hpp

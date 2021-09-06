@@ -13,6 +13,7 @@ using namespace std;
 typedef boost::multi_array<int, 3>::array_view<3>::type view;
 typedef boost::multi_array_types::index_range range;
 
+//w,h = dims, stabilizer (A/B) = which type of stabilizer to correct errors for
 bias_correction_helper::bias_correction_helper(int w, int h, char stabilizer) :
 w(w),
 h(h),
@@ -23,6 +24,11 @@ local_gauss_laws(boost::extents[w][h][w+h])
     get_gauss_laws();
 }
 
+/*
+ * gets a basis of local gauss laws for boxes up to size w,h. Local gauss law for a box is
+ * defined as a product of stabilizers such that stabilizers act within the box only as
+ * Pauli Z.
+ */
 void bias_correction_helper::get_gauss_laws() {
     int max_w = h+1;
     vector<int> r1(max_w);
@@ -63,6 +69,7 @@ void bias_correction_helper::get_gauss_laws() {
     }
 }
 
+// check if a cluster with boundary rect is correctable with only pauli Z errors
 bool bias_correction_helper::check_cluster(std::vector<std::pair<int, int> > &cluster, std::vector<int> &rect) {
     tl_x = rect[0];
     tl_y = rect[1];
@@ -83,11 +90,14 @@ bool bias_correction_helper::check_cluster(std::vector<std::pair<int, int> > &cl
     return gaussian_elimination(cluster);
 }
 
+//attempt to correct the cluster with pauli Z operators. If it is not correctable with Z,
+//try to correct the most possible syndromes, and then update cluster to contain only the remaining syndromes
 void bias_correction_helper::correct_cluster(std::vector<std::pair<int, int> > &cluster, boost::multi_array<int, 2>& correction_Z) {
     update_cluster(cluster);
     apply_correction(correction_Z);
 }
 
+//updates vector cluster to contain only the uncorrected syndromes
 void bias_correction_helper::update_cluster(vector<pair<int, int> > &cluster) {
     vector<pair<int,int>> new_cluster;
     for (int i = 0; i < cluster.size(); i++) {
@@ -101,6 +111,7 @@ void bias_correction_helper::update_cluster(vector<pair<int, int> > &cluster) {
     cluster = move(new_cluster);
 }
 
+//applies a correction of Pauli Z operators. In practice, evolve syndromes using Sierpinski CA rule.
 void bias_correction_helper::apply_correction(boost::multi_array<int, 2> &correction_Z) {
     int x_dir = -1;
     int y_dir = -1;
@@ -128,6 +139,7 @@ void bias_correction_helper::apply_correction(boost::multi_array<int, 2> &correc
     }
 }
 
+//helper for determining gauss laws of a box
 view bias_correction_helper::get_gauss_law_view(vector<pair<int, int> > &cluster) {
     int gauss_bbox_min_x = 0;
     int gauss_bbox_max_x = rect_w;
@@ -147,6 +159,12 @@ view bias_correction_helper::get_gauss_law_view(vector<pair<int, int> > &cluster
     return local_gauss_laws[boost::indices[range(gauss_bbox_min_x, gauss_bbox_max_x)][range(gauss_bbox_min_y,gauss_bbox_max_y)][range(gauss_offs_min,gauss_offs_max)]];
 }
 
+/*
+ * Try to find the largest set of correctable syndromes (greedily, not guaranteed to be largest).
+ * Do this by finding largest set that has even support on each local Gauss law. This is done by
+ * writing syndrome's support on gauss laws as a vector in Z2 and doing Gaussian elimination to find a
+ * sum of syndromes that is 0 mod 2.
+ */
 bool bias_correction_helper::gaussian_elimination(vector<pair<int,int>>& cluster) {
     view gauss_law_view = get_gauss_law_view(cluster);
     int gauss_law_range = (int)gauss_law_view.shape()[2];

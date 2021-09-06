@@ -9,12 +9,10 @@
 #include <chrono>
 #include "threshold_sim.hpp"
 #include "thermal_bias_sim.hpp"
+#include "ca_sim.hpp"
 
 using namespace std;
 
-//currently set up to run a thermal memory time simulation, and output lifetime. Takes
-//one or two command line arguments. First is the # of averages to take. Second (optional)
-//is the filename to output to.
 int main(int argc, const char * argv[]) {
     string filename = "";
     int samples = atoi(argv[1]);
@@ -23,22 +21,26 @@ int main(int argc, const char * argv[]) {
     }
 
     //system sizes
-    vector<pair<int,int>> dims {pair<int,int>(6,9),pair<int,int>(12,15),pair<int,int>(24,27),pair<int,int>(48,51),pair<int,int>(96,99),pair<int,int>(192,195)};
-    //approximate time intervals to check for logical errors
-    vector<double> strides {1000,1000,1000,1000,1000,1000};
+    vector<pair<int,int>> dims {pair<int,int>(12,15),pair<int,int>(24,27),pair<int,int>(48,51)};
+    //time intervals to check for logical errors (for each size)
+    vector<int> strides {1,1,1};
     //temperatures
-    vector<float> Ts {0.2,0.25};
-    
+    vector<float> ps {0.0001};
+    //bias
+    vector<float> normalized_bias {0.0,0.0,1.0};
+    //number of steps between using the CA rule
+    int ca_freq = 1;
+
     auto t1 = chrono::high_resolution_clock::now();
     auto timenow =
           chrono::system_clock::to_time_t(chrono::system_clock::now());
     cout << ctime(&timenow) << endl;
-    
-    thermal_bias_sim::lifetime_sim(samples, strides, dims, Ts, filename);
-    
+
+    ca_sim::lifetime_sim(samples, dims, strides, ps, normalized_bias, ca_freq, filename);
+
     auto t2 = chrono::high_resolution_clock::now();
     chrono::duration<double> dur = std::chrono::duration_cast<chrono::duration<double>>(t2 - t1);
     cout << dur.count() << endl;
-    
+
     return 0;
 }

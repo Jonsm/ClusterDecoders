@@ -5,8 +5,9 @@
 //  Created by Jon San Miguel on 8/4/21.
 //
 
-//helper class for cluster_decoder. Each sublattice decodes separately. This is equivalent
-//under local unitary to decoding Z and X errors in CSS code.
+//helper class for cluster_decoder. Each lattice decodes separately. There
+//are two stabilizers A and B, representing (going around hexagon) XZXZXZ and
+//ZYZYZY. This is equivalent under local unitary to decoding Z and X errors in CSS code.
 
 #ifndef stabilizer_lattice_hpp
 #define stabilizer_lattice_hpp
