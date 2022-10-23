@@ -32,6 +32,8 @@ public:
     //return true if the correction + error is trivial.
     bool check_correction();
     
+    int num_errors();
+    
     //debug functions
     void print_error();
     void print_correction();
@@ -43,6 +45,7 @@ public:
 private:
     int w;
     int h;
+    int total_errors = 0;
     std::vector<float> bias;
     stabilizer_lattice lattice_A;
     stabilizer_lattice lattice_B;

@@ -5,6 +5,8 @@
 //  Created by Jon San Miguel on 8/22/21.
 //
 
+//DEPRECATED
+
 #include "thermal_bias_sim.hpp"
 #include "cluster_decoder.hpp"
 #include <iostream>
@@ -44,9 +46,6 @@ dis(0.0,1.0)
     }
     
     R = rd_array.total_prob();
-    for (int i = 0; i < 4; i++) {
-        
-    }
 }
 
 //act with the error channel for a time no smaller than t_evol. Returns the time of
@@ -154,7 +153,7 @@ void thermal_bias_sim::lifetime_sim(int average, std::vector<double> &strides, s
                 do {
                     t_A = sim_A.mc_time(stride);
                     t_B = sim_B.mc_time(stride);
-                } while (decoder.make_correction() && decoder.check_correction());
+                } while (!decoder.make_correction() || decoder.check_correction());
                 
                 double t = min(t_A, t_B);
                 cout << t << endl;

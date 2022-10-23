@@ -13,7 +13,8 @@
 #define stabilizer_lattice_hpp
 
 #include <vector>
-#include "clustering_helper.hpp"
+//#include "clustering_helper.hpp"
+#include "clustering_helper_naive.hpp"
 #include "bias_correction_helper.hpp"
 
 class stabilizer_lattice {
@@ -29,6 +30,7 @@ public:
     bool make_correction();
     bool check_correction();
     void clear();
+    
 private:
     bool reduce_weight;
     bool give_up;
@@ -38,15 +40,12 @@ private:
     char stabilizer;
     std::vector<std::pair<int, int>> offsets_Z;
     std::vector<std::pair<int, int>> offsets_not_Z;
-    clustering_helper clustering;
-    boost::multi_array<int, 2> syndromes_tmp;
+    clustering_helper_naive clustering_helper;
     bias_correction_helper bias_correction;
     
     void get_crossover_n();
     void attempt_correction(std::vector<std::pair<int,int>>& cluster, std::vector<int>& rect);
-    bool no_bias_correctable(std::vector<std::pair<int,int>>& cluster, std::vector<int>& rect);
     bool correctable(std::vector<std::pair<int,int>>& cluster, std::vector<int>& rect);
-    bool bias_correctable(std::vector<std::pair<int,int>>& cluster, std::vector<int>& rect);
     void string_clean(int x_src, int y_src, int x_dest, int y_dest);
     std::pair<int,int> string_clean_x(int x_src, int y_src, int x_dest);
     void string_clean_y(int x_src, int y_src, int x_dest, int y_dest);

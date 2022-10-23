@@ -28,7 +28,10 @@ lattice_B(w,h,bias, 'B', give_up, reduce_weight)
 
 //flips a qubit at site x,y on sublattice 1/2 with Pauli error p
 void cluster_decoder::flip(int x, int y, int sublattice, Pauli p) {
+    int old_st, new_st;
+    
     if (sublattice == 1) {
+        old_st = lattice_A.errors_Z[x][y] | lattice_B.errors_not_Z[x][y];
         switch (p) {
             case X:
                 lattice_B.flip(x, y, false);
@@ -41,7 +44,9 @@ void cluster_decoder::flip(int x, int y, int sublattice, Pauli p) {
                 lattice_A.flip(x, y, true);
                 break;
         }
+        new_st = lattice_A.errors_Z[x][y] | lattice_B.errors_not_Z[x][y];
     } else {
+        old_st = lattice_B.errors_Z[x][y] | lattice_A.errors_not_Z[x][y];
         switch (p) {
             case X:
                 lattice_A.flip(x, y, false);
@@ -54,7 +59,10 @@ void cluster_decoder::flip(int x, int y, int sublattice, Pauli p) {
                 lattice_B.flip(x, y, true);
                 break;
         }
+        new_st = lattice_B.errors_Z[x][y] | lattice_A.errors_not_Z[x][y];
     }
+    
+    total_errors += (new_st - old_st);
 }
 
 //attempt to make a correction. return false if give_up is true and clusters are too large
@@ -69,6 +77,7 @@ bool cluster_decoder::check_correction() {
 
 //reset the lattice to no errors so a new simulation can be run
 void cluster_decoder::clear() {
+    total_errors = 0;
     lattice_A.clear();
     lattice_B.clear();
 }
@@ -106,6 +115,10 @@ void cluster_decoder::print_helper(boost::multi_array<int, 2>& z_A, boost::multi
         }
         cout << endl;
     }
+}
+
+int cluster_decoder::num_errors() {
+    return total_errors;
 }
 
 //print error that occurred

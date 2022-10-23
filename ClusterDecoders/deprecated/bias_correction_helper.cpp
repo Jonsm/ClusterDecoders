@@ -8,6 +8,8 @@
 #include "bias_correction_helper.hpp"
 #include <iostream>
 
+//DEPRECATED
+
 using namespace std;
 
 typedef boost::multi_array<int, 3>::array_view<3>::type view;

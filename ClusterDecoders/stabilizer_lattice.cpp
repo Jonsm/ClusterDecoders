@@ -29,8 +29,7 @@ errors_not_Z(boost::extents[w][h]),
 syndromes(boost::extents[w][h]),
 correction_Z(boost::extents[w][h]),
 correction_not_Z(boost::extents[w][h]),
-clustering(w, h),
-syndromes_tmp(boost::extents[w][h]),
+clustering_helper(w,h),
 reduce_weight(reduce_weight),
 give_up(give_up),
 bias_correction(w, h, stabilizer)
@@ -56,6 +55,7 @@ void stabilizer_lattice::flip(int x, int y, bool z) {
             int shift_x = (coord.first + x + w) % w;
             int shift_y = (coord.second + y + h) % h;
             syndromes[shift_x][shift_y] ^= 1;
+            clustering_helper.flip(shift_x, shift_y);
         }
     } else {
         errors_not_Z[x][y] ^= 1;
@@ -63,13 +63,13 @@ void stabilizer_lattice::flip(int x, int y, bool z) {
             int shift_x = (coord.first + x + w) % w;
             int shift_y = (coord.second + y + h) % h;
             syndromes[shift_x][shift_y] ^= 1;
+            clustering_helper.flip(shift_x, shift_y);
         }
     }
 }
 
-//checks if the error is correctable with arbitrary (unbiased) Pauli operator, by checking parity on
-//each colored hexagon
-bool stabilizer_lattice::no_bias_correctable(vector<pair<int, int> > &cluster, vector<int> &rect) {
+//checks if the error is correctable, by checking parity on each colored hexagon
+bool stabilizer_lattice::correctable(vector<pair<int, int> > &cluster, vector<int> &rect) {
     int colors[3] = {0,0,0};
     for (const pair<int,int>& coord : cluster) {
         int x = coord.first;
@@ -81,21 +81,8 @@ bool stabilizer_lattice::no_bias_correctable(vector<pair<int, int> > &cluster, v
     return (colors[0] % 2 == colors[1] % 2) && (colors[1] % 2 == colors[2] % 2);
 }
 
-//checks if the error is correctable, or if give_up is true, returns false if the error is too large
-bool stabilizer_lattice::correctable(vector<pair<int, int> > &cluster, vector<int> &rect) {
-    if (give_up && (rect[2] >= w/2 || rect[3] >= h/2)) {
-        return false;
-    }
-    
-    return no_bias_correctable(cluster, rect);
-}
-
 //apply a Pauli that removes the error syndrome
 void stabilizer_lattice::attempt_correction(vector<pair<int,int>>& cluster, vector<int> &rect) {
-    if (rect[2] < w/2 && rect[3] < h/2) {
-        bias_correction.check_cluster(cluster, rect);
-        bias_correction.correct_cluster(cluster, correction_Z);
-    }
     if (cluster.size() > 0) {
         no_bias_correction(cluster, rect);
     }
@@ -204,9 +191,8 @@ void stabilizer_lattice::no_bias_correction(std::vector<std::pair<int, int> > &c
 
 /*
  * Try to correct the error. First get clusters. Check if each cluster is correctable, then try to
- * correct first with a Z-only correction operator, and then with a general operator. Repeat with
- * larger cluster sizes until all errors are corrected, or if give_up is true, clusters become
- * larger than min(w,h)/2. In that case return false, else true.
+ * correct each cluster. Repeat with larger cluster sizes until all errors are corrected, or if
+ * give_up is true, clusters become larger than min(w,h)/2. In that case return false, else true.
  */
 bool stabilizer_lattice::make_correction() {
     fill(correction_Z.data(), correction_Z.data()+correction_Z.num_elements(), 0);
@@ -218,24 +204,23 @@ bool stabilizer_lattice::make_correction() {
     }
     vector<vector<pair<int,int>>> clusters;
     vector<vector<int>> rects;
-    int syndromes_remaining = 0;
-    for (int x = 0; x < w; x++) {
-        for (int y = 0; y < h; y++) {
-            syndromes_tmp[x][y] = syndromes[x][y];
-            syndromes_remaining += syndromes[x][y];
-        }
-    }
+    int syndromes_remaining = clustering_helper.get_n_syndromes();
+    clustering_helper.unmark_all();
 
     for (int l = 0; l <= p_M; l++) {
         clusters.clear();
         rects.clear();
-        clustering.get_clusters(syndromes_tmp, clusters, rects, l);
+        clustering_helper.get_clusters(clusters, rects, l);
         
         for (int i = 0; i < clusters.size(); i++) {
+            if (give_up && (rects[i][2] >= w/2 || rects[i][3] >= h/2)) {
+                return false;
+            }
+            
             if (correctable(clusters[i], rects[i])) {
                 for (const pair<int,int>& coord : clusters[i]) {
                     syndromes_remaining--;
-                    syndromes_tmp[coord.first][coord.second] = 0;
+                    clustering_helper.mark_clustered(coord.first, coord.second);
                 }
                 attempt_correction(clusters[i], rects[i]);
             }
@@ -372,7 +357,7 @@ bool stabilizer_lattice::check_logicals() {
 
 //check if the correction did not violate stabilizers or logicals
 bool stabilizer_lattice::check_correction() {
-    return check_stabilizers() && check_logicals();
+    return check_logicals();
 }
 
 //reset the qubits on the lattice so a new simulation can be performed
@@ -382,4 +367,5 @@ void stabilizer_lattice::clear() {
     fill(correction_Z.data(), correction_Z.data()+correction_Z.num_elements(), 0);
     fill(correction_not_Z.data(), correction_not_Z.data()+correction_not_Z.num_elements(), 0);
     fill(syndromes.data(), syndromes.data()+syndromes.num_elements(), 0);
+    clustering_helper.clear();
 }

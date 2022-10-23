@@ -41,6 +41,8 @@ private:
     int h_coarse;
     int r;
     boost::multi_array<int,2> already_clustered;
+    boost::multi_array<int,2> empty;
+    boost::multi_array<int,2> partial_boxes;
     std::queue<std::pair<int,int>> to_visit;
     boost::multi_array<extremes, 2> box_extremes;
     boost::multi_array<int,2> ll_bounds;
@@ -48,8 +50,14 @@ private:
     boost::multi_array<int,3> delta;
     std::vector<std::pair<int,int>> dir_pairs;
     
+    void preprocess_partial();
     void get_delta(boost::multi_array<int, 2>& syndromes);
     void get_delta_vh(int x, int y);
+    void get_delta_vh_edge(int x, int y);
+//    void get_delta_diagonal_tr_edge(boost::multi_array<int, 2>& syndromes, int x, int y);
+    bool get_delta_diagonal_tl_helper(boost::multi_array<int, 2>& syndromes, int x_br, int y_br, int x_tl, int y_tl);
+    bool get_delta_diagonal_tr_helper(boost::multi_array<int, 2>& syndromes, int x_bl, int y_bl, int x_tr, int y_tr);
+    void get_delta_diagonal_edge(boost::multi_array<int, 2>& syndromes, int x, int y);
     void get_delta_diagonal(boost::multi_array<int, 2>& syndromes, int x, int y);
     void preprocess_box_delta(boost::multi_array<int, 2>& syndromes, int idx, int idy);
     void coord_to_rect(int x, int y, int& top, int& left, int& rect_w, int& rect_h);

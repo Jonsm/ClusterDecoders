@@ -60,7 +60,7 @@ void ca_sim::flip(int x, int y, int sublattice, Pauli p) {
 
 //check if the error was correctable by RG decoder and correction+error was trivial
 bool ca_sim::check() {
-    return decoder.make_correction() && decoder.check_correction();
+    return !decoder.make_correction() || decoder.check_correction();
 }
 
 //adds errors on entire system using single-site probabilities given by bias
@@ -117,8 +117,8 @@ void ca_sim::steps(int n_steps) {
         add_errors();
         
         if (total_steps % ca_freq == 0) {
-            ca_correction(3, 1);
-            ca_correction(3, 2);
+            ca_correction(2, 1);
+            ca_correction(2, 2);
         }
     }
 }
@@ -128,13 +128,17 @@ void ca_sim::debug() {
     cout << "===========" << endl;
     decoder.print_syndrome();
 //    cout << "@@@@@@@@@@@@@@@@@@" << endl;
+//    int count = 0;
 //    for (int y = 0; y < h; y++) {
 //        for (int x = 0; x < w; x++) {
-//            cout << syndromes_A[x][y] << syndromes_B[x][y] << " ";
+//            cout << syndromes_A[x][y] << " ";
+//            count += syndromes_A[x][y];
 //        }
 //        cout << endl;
 //    }
+//    cout << endl << count << endl;
 }
+
 /*
  Runs a simulation to find lifetime with cellular automaton rule. Each step of the simulation act
  with error channel on all sites, then apply the CA rule every freq steps. Output # of steps until
@@ -188,6 +192,59 @@ void ca_sim::lifetime_sim(int avg, vector<pair<int, int> > &dims, vector<int> &s
                 cout << t << endl;
                 if (filename != "") {
                     myfile << t << endl;
+                }
+            }
+        }
+    }
+    
+    if (filename != "") {
+        myfile.close();
+    }
+}
+
+void ca_sim::distribution_sim(int avg, int t, std::vector<std::pair<int, int> > &dims, std::vector<float> &ps, std::vector<float> &normalized_bias, int freq, std::string filename) {
+    cout << "p0,px,py,pz,freq,w,h,count" << endl;
+    ofstream myfile;
+    if (filename != "") {
+        myfile.open(filename);
+        myfile << "p0,px,py,pz,freq,w,h,count" << endl;
+    }
+    
+    for (int i = 0; i < dims.size(); i++) {
+        int w = dims[i].first;
+        int h = dims[i].second;
+        
+        for (float p : ps) {
+            vector<float> bias(4);
+            bias[0] = 1 - p;
+            for (int i = 0; i < 3; i++) {
+                bias[i+1] = normalized_bias[i] * p;
+            }
+            
+            string error_probs = "";
+            for (int i = 0; i < 4; i++) {
+                error_probs += to_string(bias[i]) + ",";
+            }
+            
+            ca_sim ca(w,h,bias,freq);
+            
+            for (int i = 0; i < avg; i++) {
+                cout << error_probs << freq << "," << w << "," << h << ",";
+                if (filename != "") {
+                    myfile << error_probs << freq << "," << w << "," << h << ",";
+                }
+                
+                ca.steps(t);
+                int syndromes_count = 0;
+                for (int x = 0; x < w; x++) {
+                    for (int y = 0; y < h; y++) {
+                        syndromes_count += (ca.syndromes_A[x][y] + ca.syndromes_B[x][y]);
+                    }
+                }
+                
+                cout << syndromes_count << endl;
+                if (filename != "") {
+                    myfile << syndromes_count << endl;
                 }
             }
         }

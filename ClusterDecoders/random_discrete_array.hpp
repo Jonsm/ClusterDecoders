@@ -21,6 +21,7 @@ public:
     void assign(int i, int prob_index);
     int get_random();
     float total_prob();
+    int get_prob_index(int i);
     
 private:
     int l;

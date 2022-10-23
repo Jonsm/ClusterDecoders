@@ -5,6 +5,8 @@
 //  Created by Jon San Miguel on 8/4/21.
 //
 
+//DEPRECATED. Works but is not as fast in practive as the naive O(errors^2) method.
+
 #include <iostream>
 #include <math.h>
 #include "boost/multi_array.hpp"
@@ -19,6 +21,8 @@ clustering_helper::clustering_helper(int w, int h) :
 w(w),
 h(h),
 already_clustered(boost::extents[w][h]),
+partial_boxes(boost::extents[w][h]),
+empty(boost::extents[w][h]),
 box_extremes(boost::extents[w][h]),
 ll_bounds(boost::extents[w][h]),
 lr_bounds(boost::extents[w][h]),
@@ -48,31 +52,213 @@ void clustering_helper::get_delta(boost::multi_array<int, 2> &syndromes) {
     }
 }
 
+void clustering_helper::get_delta_vh_edge(int x, int y) {
+    int top_c, left_c, w_c, h_c;
+    coord_to_rect(x, y, top_c, left_c, w_c, h_c);
+    
+    if (partial_boxes[x][y] == E || partial_boxes[x][y] == SE) {
+        int x_left = x-1;
+        int x_right = (x + 1) % w_coarse;
+        int top_r, left_r, w_r, h_r, top_l, left_l, w_l, h_l;
+        coord_to_rect(x_left, y, top_l, left_l, w_l, h_l);
+        coord_to_rect(x_right, y, top_r, left_r, w_r, h_r);
+        
+        int x_diff = w_l - box_extremes[x_left][y].right + box_extremes[x_right][y].left + w_c;
+        if (x_diff <= r) {
+            delta[x][y][W] = 1;
+            delta[x][y][E] = 1;
+            delta[x_left][y][E] = 1;
+            delta[x_right][y][W] = 1;
+        }
+    }
+    
+    if (partial_boxes[x][y] == S || partial_boxes[x][y] == SE) {
+        int y_top = y - 1;
+        int y_bot = (y + 1) % h_coarse;
+        int top_t, left_t, w_t, h_t, top_b, left_b, w_b, h_b;
+        coord_to_rect(x, y_top, top_t, left_t, w_t, h_t);
+        coord_to_rect(x, y_bot, top_b, left_b, w_b, h_b);
+        
+        int y_diff = h_t - box_extremes[x][y_top].bottom + box_extremes[x][y_bot].top + h_c;
+        if (y_diff <= r) {
+            delta[x][y][N]=1;
+            delta[x][y][S]=1;
+            delta[x][y_top][S]=1;
+            delta[x][y_bot][N]=1;
+        }
+    }
+}
+
 //checks if regions with same x or y are in the same cluster
 void clustering_helper::get_delta_vh(int x, int y) {
-    if (already_clustered[x][y]) {
+    if (empty[x][y]) {
+        if (partial_boxes[x][y] != 0) {
+            get_delta_vh_edge(x, y);
+        }
         return;
     }
     int x_right = (x + 1) % w_coarse;
     int y_bottom = (y + 1) % h_coarse;
+    
     int top_c, left_c, w_c, h_c;
     coord_to_rect(x, y, top_c, left_c, w_c, h_c);
     
     int x_diff = w_c - box_extremes[x][y].right + box_extremes[x_right][y].left;
     int y_diff = h_c - box_extremes[x][y].bottom + box_extremes[x][y_bottom].top;
     
-    if (!already_clustered[x_right][y] && x_diff <= r) {
+    if (!empty[x_right][y] && x_diff <= r) {
         delta[x][y][E] = 1;
         delta[x_right][y][W] = 1;
     }
-    if (!already_clustered[x][y_bottom] && y_diff <= r) {
+    if (!empty[x][y_bottom] && y_diff <= r) {
         delta[x][y][S] = 1;
         delta[x][y_bottom][N] = 1;
     }
 }
 
+bool clustering_helper::get_delta_diagonal_tr_helper(boost::multi_array<int, 2> &syndromes, int x_bl, int y_bl, int x_tr, int y_tr) {
+    if (empty[x_bl][y_bl] || empty[x_tr][y_tr]) {
+        return false;
+    }
+    
+    int top_tr,left_tr,w_tr,h_tr,top_bl,left_bl,w_bl,h_bl,ofs_x,ofs_y;
+    coord_to_rect(x_tr, y_tr, top_tr, left_tr, w_tr, h_tr);
+    coord_to_rect(x_bl, y_bl, top_bl, left_bl, w_bl, h_bl);
+    view syndromes_bl = syndromes[boost::indices[range(left_bl,left_bl+w_bl)][range(top_bl,top_bl+h_bl)]];
+    view bounds_tr = ll_bounds[boost::indices[range(left_tr,left_tr+w_tr)][range(top_tr,top_tr+h_tr)]];
+    
+    int x_bl_right = left_bl + w_bl;
+    ofs_x = (left_tr - x_bl_right + w) % w;
+    int y_tr_bot = top_tr + h_tr;
+    ofs_y = (top_bl - y_tr_bot + w) % w;
+    
+    for (int x = 0; x < w_bl; x++) {
+        for (int y = 0; y < h_bl; y++) {
+            if (syndromes_bl[x][y] == 1) {
+                int tr_x_furthest = max(0, min(r-(w_bl-x)-ofs_x,w_tr-1));
+                int tr_y_furthest = min(h_tr-1, max(0, h_tr-(r-y)+ofs_y));
+                if (bounds_tr[tr_x_furthest][tr_y_furthest] == 1) {
+                    return true;
+                }
+            }
+        }
+    }
+    
+    return false;
+}
+
+bool clustering_helper::get_delta_diagonal_tl_helper(boost::multi_array<int, 2> &syndromes, int x_br, int y_br, int x_tl, int y_tl) {
+    if (empty[x_br][y_br] || empty[x_tl][y_tl]) {
+        return false;
+    }
+    
+    int top_tl,left_tl,w_tl,h_tl,top_br,left_br,w_br,h_br,ofs_x,ofs_y;
+    coord_to_rect(x_tl, y_tl, top_tl, left_tl, w_tl, h_tl);
+    coord_to_rect(x_br, y_br, top_br, left_br, w_br, h_br);
+    view syndromes_br = syndromes[boost::indices[range(left_br,left_br+w_br)][range(top_br,top_br+h_br)]];
+    view bounds_tl = lr_bounds[boost::indices[range(left_tl,left_tl+w_tl)][range(top_tl,top_tl+h_tl)]];
+    
+    int x_tl_right = left_tl+w_tl;
+    ofs_x = (left_br - x_tl_right + w) % w;
+    int y_tl_bot = top_tl+h_tl;
+    ofs_y = (top_br - y_tl_bot + h) % h;
+    
+    for (int x = 0; x < w_br; x++) {
+        for (int y = 0; y < h_br; y++) {
+            if (syndromes_br[x][y] == 1) {
+                int tl_x_furthest = max(0, w_tl-(r-x)-ofs_x);
+                int tl_y_furthest = min(h_tl-1, max(0, h_tl-(r-y)+ofs_y));
+                if (bounds_tl[tl_x_furthest][tl_y_furthest] == 1) {
+                    return true;
+                }
+            }
+        }
+    }
+    
+    return false;
+}
+
+void clustering_helper::get_delta_diagonal_edge(boost::multi_array<int, 2> &syndromes, int x, int y) {
+    int x_tr, y_tr, x_tl, y_tl, x_br, y_br, x_bl, y_bl;
+    if (partial_boxes[x][y] == S || partial_boxes[x][y] == SE) {
+        x_tl = x;
+        x_br = (x + 1) % w_coarse;
+        y_tl = (y - 1 + h_coarse) % h_coarse;
+        y_br = (y + 1) % h_coarse;
+        if (get_delta_diagonal_tl_helper(syndromes, x_br, y_br, x_tl, y_tl)) {
+            delta[x][y][N] = 1;
+            delta[x][y][SE] = 1;
+            delta[x_tl][y_tl][S] = 1;
+            delta[x_br][y_br][NW] = 1;
+        }
+        
+        x_tr = x;
+        x_bl = (x - 1 + w_coarse) % w_coarse;
+        y_tr = (y - 1 + h_coarse) % h_coarse;
+        y_bl = (y + 1) % h_coarse;
+        if (get_delta_diagonal_tl_helper(syndromes, x_bl, y_bl, x_tr, y_tr)) {
+            delta[x][y][N] = 1;
+            delta[x][y][SW] = 1;
+            delta[x_tr][y_tr][S] = 1;
+            delta[x_bl][y_bl][NE] = 1;
+        }
+    }
+    
+    if (partial_boxes[x][y] == E || partial_boxes[x][y] == SE) {
+        x_tl = (x - 1 + w_coarse) % w_coarse;
+        x_br = (x + 1) % w_coarse;
+        y_tl = (y - 1 + h_coarse) % h_coarse;
+        y_br = y;
+        if (get_delta_diagonal_tl_helper(syndromes, x_br, y_br, x_tl, y_tl)) {
+            delta[x][y][NW] = 1;
+            delta[x][y][E] = 1;
+            delta[x_tl][y_tl][SE] = 1;
+            delta[x_br][y_br][W] = 1;
+        }
+        
+        x_tr = (x + 1) % w_coarse;
+        x_bl = (x - 1 + w_coarse) % w_coarse;
+        y_tr = (y - 1 + h_coarse) % h_coarse;
+        y_bl = y;
+        if (get_delta_diagonal_tl_helper(syndromes, x_bl, y_bl, x_tr, y_tr)) {
+            delta[x][y][NE] = 1;
+            delta[x][y][W] = 1;
+            delta[x_tr][y_tr][SW] = 1;
+            delta[x_bl][y_bl][E] = 1;
+        }
+    }
+    
+    if (partial_boxes[x][y] == SE) {
+        x_tl = (x - 1 + w_coarse) % w_coarse;
+        x_br = (x + 1) % w_coarse;
+        y_tl = (y - 1 + h_coarse) % h_coarse;
+        y_br = (y + 1) % h_coarse;
+        if (get_delta_diagonal_tl_helper(syndromes, x_br, y_br, x_tl, y_tl)) {
+            delta[x][y][NW] = 1;
+            delta[x][y][SE] = 1;
+            delta[x_tl][y_tl][SE] = 1;
+            delta[x_br][y_br][NW] = 1;
+        }
+        
+        x_tr = (x + 1) % w_coarse;
+        x_bl = (x - 1 + w_coarse) % w_coarse;
+        y_tr = (y - 1 + h_coarse) % h_coarse;
+        y_bl = (y + 1) % h_coarse;
+        if (get_delta_diagonal_tl_helper(syndromes, x_bl, y_bl, x_tr, y_tr)) {
+            delta[x][y][NE] = 1;
+            delta[x][y][SW] = 1;
+            delta[x_tr][y_tr][SW] = 1;
+            delta[x_bl][y_bl][NE] = 1;
+        }
+    }
+}
+
 //checks if regions touching diagonally are in the same cluster
 void clustering_helper::get_delta_diagonal(boost::multi_array<int, 2> &syndromes, int idx, int idy) {
+    if (empty[idx][idy] && partial_boxes[idx][idy] != 0) {
+        get_delta_diagonal_edge(syndromes, idx, idy);
+    }
+    
     int x_tr = (idx + 1) % w_coarse;
     int x_tl = (idx - 1 + w_coarse) % w_coarse;
     int y_top = (idy - 1 + h_coarse) % h_coarse;
@@ -85,29 +271,29 @@ void clustering_helper::get_delta_diagonal(boost::multi_array<int, 2> &syndromes
     view bounds_tr = ll_bounds[boost::indices[range(left_tr,left_tr+w_tr)][range(top_tr,top_tr+h_tr)]];
     view bounds_tl = lr_bounds[boost::indices[range(left_tl,left_tl+w_tl)][range(top_tl,top_tl+h_tl)]];
     
-    bool found_tl = already_clustered[x_tl][y_top];
-    bool found_tr = already_clustered[x_tr][y_top];
+    bool empty_tl = empty[x_tl][y_top];
+    bool empty_tr = empty[x_tr][y_top];
+    if (empty_tl && empty_tr) {
+        return;
+    }
 
     for (int x = 0; x < w_c; x++) {
         for (int y = 0; y < h_c; y++) {
-            if (found_tl && found_tr) {
-                return;
-            }
             if (syndromes_c[x][y] == 1) { 
-                if (!found_tl) {
+                if (!empty_tl) {
                     int tl_x_furthest = max(0, w_tl-(r-x));
                     int tl_y_furthest = max(0, h_tl-(r-y));
                     if (bounds_tl[tl_x_furthest][tl_y_furthest] == 1) {
-                        found_tl = true;
+                        empty_tl = true;
                         delta[idx][idy][NW] = 1;
                         delta[x_tl][y_top][SE] = 1;
                     }
                 }
-                if (!found_tr) {
+                if (!empty_tr) {
                     int tr_x_furthest = min(r-(w_c-x),w_tr-1);
                     int tr_y_furthest = max(0, h_tr-(r-y));
                     if (bounds_tr[tr_x_furthest][tr_y_furthest] == 1) {
-                        found_tr = true;
+                        empty_tr = true;
                         delta[idx][idy][NE] = 1;
                         delta[x_tr][y_top][SW] = 1;
                     }
@@ -122,6 +308,7 @@ void clustering_helper::get_delta_diagonal(boost::multi_array<int, 2> &syndromes
 void clustering_helper::preprocess_box_delta(boost::multi_array<int, 2> &syndromes, int idx, int idy) {
     int top, left, box_w, box_h;
     coord_to_rect(idx, idy, top, left, box_w, box_h);
+//    cout << "BOX:" << top << "," << left << "," << box_w << "," << box_h << endl;
     view box_view = syndromes[boost::indices[range(left,left+box_w)][range(top,top+box_h)]];
 
     extremes& extremes = box_extremes[idx][idy];
@@ -129,12 +316,12 @@ void clustering_helper::preprocess_box_delta(boost::multi_array<int, 2> &syndrom
     extremes.bottom = 0;
     extremes.left = box_w - 1;
     extremes.right = 0;
-    bool empty = true;
+    bool is_empty = true;
     
     for (int x = 0; x < box_w; x++) {
         for (int y = 0; y < box_h; y++) {
             if (box_view[x][y] == 1) {
-                empty = false;
+                is_empty = false;
                 if (x > extremes.right) {
                     extremes.right = x;
                 }
@@ -187,8 +374,24 @@ void clustering_helper::preprocess_box_delta(boost::multi_array<int, 2> &syndrom
         x--;
     }
     
-    if (empty) {
-        already_clustered[idx][idy] = 1;
+    if (is_empty) {
+        empty[idx][idy] = 1;
+    }
+}
+
+void clustering_helper::preprocess_partial() {
+    for (int x = 0; x < w_coarse; x++) {
+        for (int y = 0; y < h_coarse; y++) {
+            if (x == w_coarse - 1 && y == h_coarse - 1) {
+                partial_boxes[x][y] = SE;
+            } else if (x == w_coarse - 1) {
+                partial_boxes[x][y] = E;
+            } else if (y == h_coarse - 1) {
+                partial_boxes[x][y] = S;
+            } else {
+                partial_boxes[x][y] = 0;
+            }
+        }
     }
 }
 
@@ -210,10 +413,12 @@ void clustering_helper::get_clusters(boost::multi_array<int, 2> &syndromes, vect
     for (int x = 0; x < w_coarse; x++) {
         for (int y = 0; y < h_coarse; y++) {
             already_clustered[x][y] = 0;
+            empty[x][y] = 0;
         }
     }
     
     if (r != 1) {
+        preprocess_partial();
         get_delta(syndromes);
     }
     
@@ -278,10 +483,13 @@ void clustering_helper::visit_r1(boost::multi_array<int, 2> &syndromes, pair<int
 void clustering_helper::visit_r_larger(boost::multi_array<int, 2> &syndromes, std::pair<int, int> coord, std::vector<std::pair<int, int> > &current_cluster) {
     int top, left, box_w, box_h;
     coord_to_rect(coord.first, coord.second, top, left, box_w, box_h);
-    for (int x = left; x < left + box_w; x++) {
-        for (int y = top; y < top + box_h; y++) {
-            if (syndromes[x][y] == 1) {
-                current_cluster.push_back(pair<int,int>(x,y));
+    
+    if (!empty[coord.first][coord.second]) {
+        for (int x = left; x < left + box_w; x++) {
+            for (int y = top; y < top + box_h; y++) {
+                if (syndromes[x][y] == 1) {
+                    current_cluster.push_back(pair<int,int>(x,y));
+                }
             }
         }
     }

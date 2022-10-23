@@ -7,9 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5238045B2758328400E73822 /* thermal_sublattice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 523804592758328400E73822 /* thermal_sublattice.cpp */; };
+		5238045E275832A900E73822 /* thermal_bias_sim_full.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5238045C275832A900E73822 /* thermal_bias_sim_full.cpp */; };
+		5277B16627824B4000EED4FE /* clustering_helper_naive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5277B16427824B3D00EED4FE /* clustering_helper_naive.cpp */; };
+		5277B1692784ED6000EED4FE /* exact_decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5277B1672784ED5A00EED4FE /* exact_decoder.cpp */; };
+		5277B16C2784ED7700EED4FE /* sierpinski_sublattice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5277B16A2784ED7100EED4FE /* sierpinski_sublattice.cpp */; };
+		5277B16F2784EDDE00EED4FE /* gaussian_elimination.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5277B16D2784EDD800EED4FE /* gaussian_elimination.cpp */; };
 		FC4970EB26CB063A000724A3 /* bias_correction_helper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC4970E926CB063A000724A3 /* bias_correction_helper.cpp */; };
 		FC4970EF26D2E0AF000724A3 /* random_discrete_array.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC4970ED26D2E0AF000724A3 /* random_discrete_array.cpp */; };
 		FC4970F326D318F9000724A3 /* thermal_bias_sim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC4970F126D318F9000724A3 /* thermal_bias_sim.cpp */; };
+		FC627FA127289E5A00DC6430 /* random_ca_sim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC627F9F27289E5A00DC6430 /* random_ca_sim.cpp */; };
+		FC627FA62730895D00DC6430 /* thermal_finite_sim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC627FA42730895D00DC6430 /* thermal_finite_sim.cpp */; };
+		FC627FAA2730A6C800DC6430 /* thermal_finite_stabilizers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC627FA82730A6C800DC6430 /* thermal_finite_stabilizers.cpp */; };
 		FC81C4AF26C6EA1C00701D8E /* threshold_sim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC81C4AD26C6EA1C00701D8E /* threshold_sim.cpp */; };
 		FCDBEB5626BB334400C5A695 /* clustering_helper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCDBEB5426BB334400C5A695 /* clustering_helper.cpp */; };
 		FCDEDF0326D99B6400FD1764 /* ca_sim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCDEDF0126D99B6400FD1764 /* ca_sim.cpp */; };
@@ -31,12 +40,30 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		523804592758328400E73822 /* thermal_sublattice.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = thermal_sublattice.cpp; sourceTree = "<group>"; };
+		5238045A2758328400E73822 /* thermal_sublattice.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = thermal_sublattice.hpp; sourceTree = "<group>"; };
+		5238045C275832A900E73822 /* thermal_bias_sim_full.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = thermal_bias_sim_full.cpp; sourceTree = "<group>"; };
+		5238045D275832A900E73822 /* thermal_bias_sim_full.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = thermal_bias_sim_full.hpp; sourceTree = "<group>"; };
+		5277B16427824B3D00EED4FE /* clustering_helper_naive.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = clustering_helper_naive.cpp; sourceTree = "<group>"; };
+		5277B16527824B3D00EED4FE /* clustering_helper_naive.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = clustering_helper_naive.hpp; sourceTree = "<group>"; };
+		5277B1672784ED5A00EED4FE /* exact_decoder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = exact_decoder.cpp; sourceTree = "<group>"; };
+		5277B1682784ED5A00EED4FE /* exact_decoder.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = exact_decoder.hpp; sourceTree = "<group>"; };
+		5277B16A2784ED7100EED4FE /* sierpinski_sublattice.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = sierpinski_sublattice.cpp; sourceTree = "<group>"; };
+		5277B16B2784ED7100EED4FE /* sierpinski_sublattice.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = sierpinski_sublattice.hpp; sourceTree = "<group>"; };
+		5277B16D2784EDD800EED4FE /* gaussian_elimination.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = gaussian_elimination.cpp; sourceTree = "<group>"; };
+		5277B16E2784EDD800EED4FE /* gaussian_elimination.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = gaussian_elimination.hpp; sourceTree = "<group>"; };
 		FC4970E926CB063A000724A3 /* bias_correction_helper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = bias_correction_helper.cpp; sourceTree = "<group>"; };
 		FC4970EA26CB063A000724A3 /* bias_correction_helper.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = bias_correction_helper.hpp; sourceTree = "<group>"; };
 		FC4970ED26D2E0AF000724A3 /* random_discrete_array.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = random_discrete_array.cpp; sourceTree = "<group>"; };
 		FC4970EE26D2E0AF000724A3 /* random_discrete_array.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = random_discrete_array.hpp; sourceTree = "<group>"; };
 		FC4970F126D318F9000724A3 /* thermal_bias_sim.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = thermal_bias_sim.cpp; sourceTree = "<group>"; };
 		FC4970F226D318F9000724A3 /* thermal_bias_sim.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = thermal_bias_sim.hpp; sourceTree = "<group>"; };
+		FC627F9F27289E5A00DC6430 /* random_ca_sim.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = random_ca_sim.cpp; sourceTree = "<group>"; };
+		FC627FA027289E5A00DC6430 /* random_ca_sim.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = random_ca_sim.hpp; sourceTree = "<group>"; };
+		FC627FA42730895D00DC6430 /* thermal_finite_sim.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = thermal_finite_sim.cpp; sourceTree = "<group>"; };
+		FC627FA52730895D00DC6430 /* thermal_finite_sim.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = thermal_finite_sim.hpp; sourceTree = "<group>"; };
+		FC627FA82730A6C800DC6430 /* thermal_finite_stabilizers.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = thermal_finite_stabilizers.cpp; sourceTree = "<group>"; };
+		FC627FA92730A6C800DC6430 /* thermal_finite_stabilizers.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = thermal_finite_stabilizers.hpp; sourceTree = "<group>"; };
 		FC81C4AD26C6EA1C00701D8E /* threshold_sim.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = threshold_sim.cpp; sourceTree = "<group>"; };
 		FC81C4AE26C6EA1C00701D8E /* threshold_sim.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = threshold_sim.hpp; sourceTree = "<group>"; };
 		FCDBEB5426BB334400C5A695 /* clustering_helper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = clustering_helper.cpp; sourceTree = "<group>"; };
@@ -64,6 +91,25 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		522A06D52905BFD30044EE44 /* deprecated */ = {
+			isa = PBXGroup;
+			children = (
+				FC627FA82730A6C800DC6430 /* thermal_finite_stabilizers.cpp */,
+				FC627FA92730A6C800DC6430 /* thermal_finite_stabilizers.hpp */,
+				FC627FA42730895D00DC6430 /* thermal_finite_sim.cpp */,
+				FC627FA52730895D00DC6430 /* thermal_finite_sim.hpp */,
+				FC627F9F27289E5A00DC6430 /* random_ca_sim.cpp */,
+				FC627FA027289E5A00DC6430 /* random_ca_sim.hpp */,
+				FCDEDF0126D99B6400FD1764 /* ca_sim.cpp */,
+				FCDEDF0226D99B6400FD1764 /* ca_sim.hpp */,
+				FC4970E926CB063A000724A3 /* bias_correction_helper.cpp */,
+				FC4970EA26CB063A000724A3 /* bias_correction_helper.hpp */,
+				FCDBEB5426BB334400C5A695 /* clustering_helper.cpp */,
+				FCDBEB5526BB334400C5A695 /* clustering_helper.hpp */,
+			);
+			path = deprecated;
+			sourceTree = "<group>";
+		};
 		FCF6370126BB12670021EFB9 = {
 			isa = PBXGroup;
 			children = (
@@ -85,9 +131,12 @@
 			isa = PBXGroup;
 			children = (
 				FCF6370D26BB12670021EFB9 /* main.cpp */,
+				522A06D52905BFD30044EE44 /* deprecated */,
 				FCF6371926BB14000021EFB9 /* paulis.hpp */,
-				FCDEDF0126D99B6400FD1764 /* ca_sim.cpp */,
-				FCDEDF0226D99B6400FD1764 /* ca_sim.hpp */,
+				523804592758328400E73822 /* thermal_sublattice.cpp */,
+				5238045A2758328400E73822 /* thermal_sublattice.hpp */,
+				5238045C275832A900E73822 /* thermal_bias_sim_full.cpp */,
+				5238045D275832A900E73822 /* thermal_bias_sim_full.hpp */,
 				FC4970F126D318F9000724A3 /* thermal_bias_sim.cpp */,
 				FC4970F226D318F9000724A3 /* thermal_bias_sim.hpp */,
 				FC4970ED26D2E0AF000724A3 /* random_discrete_array.cpp */,
@@ -96,12 +145,16 @@
 				FC81C4AE26C6EA1C00701D8E /* threshold_sim.hpp */,
 				FCF6371526BB13A30021EFB9 /* cluster_decoder.cpp */,
 				FCF6371626BB13A30021EFB9 /* cluster_decoder.hpp */,
-				FC4970E926CB063A000724A3 /* bias_correction_helper.cpp */,
-				FC4970EA26CB063A000724A3 /* bias_correction_helper.hpp */,
 				FCF6371A26BB14DA0021EFB9 /* stabilizer_lattice.cpp */,
 				FCF6371B26BB14DA0021EFB9 /* stabilizer_lattice.hpp */,
-				FCDBEB5426BB334400C5A695 /* clustering_helper.cpp */,
-				FCDBEB5526BB334400C5A695 /* clustering_helper.hpp */,
+				5277B16427824B3D00EED4FE /* clustering_helper_naive.cpp */,
+				5277B16527824B3D00EED4FE /* clustering_helper_naive.hpp */,
+				5277B1672784ED5A00EED4FE /* exact_decoder.cpp */,
+				5277B1682784ED5A00EED4FE /* exact_decoder.hpp */,
+				5277B16A2784ED7100EED4FE /* sierpinski_sublattice.cpp */,
+				5277B16B2784ED7100EED4FE /* sierpinski_sublattice.hpp */,
+				5277B16D2784EDD800EED4FE /* gaussian_elimination.cpp */,
+				5277B16E2784EDD800EED4FE /* gaussian_elimination.hpp */,
 			);
 			path = ClusterDecoders;
 			sourceTree = "<group>";
@@ -162,15 +215,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5277B16627824B4000EED4FE /* clustering_helper_naive.cpp in Sources */,
+				FC627FA127289E5A00DC6430 /* random_ca_sim.cpp in Sources */,
 				FC4970F326D318F9000724A3 /* thermal_bias_sim.cpp in Sources */,
 				FCDEDF0326D99B6400FD1764 /* ca_sim.cpp in Sources */,
+				5238045B2758328400E73822 /* thermal_sublattice.cpp in Sources */,
+				FC627FA62730895D00DC6430 /* thermal_finite_sim.cpp in Sources */,
 				FCF6370E26BB12670021EFB9 /* main.cpp in Sources */,
+				FC627FAA2730A6C800DC6430 /* thermal_finite_stabilizers.cpp in Sources */,
 				FCDBEB5626BB334400C5A695 /* clustering_helper.cpp in Sources */,
 				FC4970EF26D2E0AF000724A3 /* random_discrete_array.cpp in Sources */,
 				FC4970EB26CB063A000724A3 /* bias_correction_helper.cpp in Sources */,
 				FCF6371C26BB14DA0021EFB9 /* stabilizer_lattice.cpp in Sources */,
+				5277B1692784ED6000EED4FE /* exact_decoder.cpp in Sources */,
 				FCF6371726BB13A30021EFB9 /* cluster_decoder.cpp in Sources */,
 				FC81C4AF26C6EA1C00701D8E /* threshold_sim.cpp in Sources */,
+				5238045E275832A900E73822 /* thermal_bias_sim_full.cpp in Sources */,
+				5277B16F2784EDDE00EED4FE /* gaussian_elimination.cpp in Sources */,
+				5277B16C2784ED7700EED4FE /* sierpinski_sublattice.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -217,7 +279,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -275,6 +337,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -293,7 +356,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				GCC_OPTIMIZATION_LEVEL = 3;
-				"HEADER_SEARCH_PATHS[arch=*]" = /usr/local/Cellar/boost/1.76.0/include;
+				"HEADER_SEARCH_PATHS[arch=*]" = /opt/homebrew/Cellar/boost/1.76.0/include;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -303,7 +366,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				GCC_OPTIMIZATION_LEVEL = 3;
-				"HEADER_SEARCH_PATHS[arch=*]" = /usr/local/Cellar/boost/1.76.0/include;
+				"HEADER_SEARCH_PATHS[arch=*]" = /opt/homebrew/Cellar/boost/1.76.0/include;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

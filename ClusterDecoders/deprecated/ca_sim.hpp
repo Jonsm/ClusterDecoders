@@ -16,20 +16,22 @@
 
 class ca_sim {
 public:
+    boost::multi_array<int, 2> syndromes_A;
+    boost::multi_array<int, 2> syndromes_B;
+    
     ca_sim(int w, int h, std::vector<float>& bias, int ca_freq);
     void steps(int n_steps);
     bool check();
     void debug();
     
     static void lifetime_sim(int avg, std::vector<std::pair<int,int>>& dims, std::vector<int>& strides, std::vector<float>& ps, std::vector<float>& normalized_bias, int freq, std::string filename);
-private:
+    static void distribution_sim(int avg, int t, std::vector<std::pair<int,int>>& dims, std::vector<float>& ps, std::vector<float>& normalized_bias, int freq, std::string filename);
+protected:
     const int w;
     const int h;
     const int ca_freq;
     int total_steps = 0;
     std::vector<float> bias_cumulative;
-    boost::multi_array<int, 2> syndromes_A;
-    boost::multi_array<int, 2> syndromes_B;
     std::vector<std::pair<int, int>> syndrome_offsets_1;
     std::vector<std::pair<int, int>> syndrome_offsets_2;
     cluster_decoder decoder;
@@ -38,7 +40,7 @@ private:
     
     void flip(int x, int y, int sublattice, Pauli p);
     void add_errors();
-    void ca_correction(int threshold, int sublattice);
+    virtual void ca_correction(int threshold, int sublattice);
 };
 
 #endif /* ca_sim_hpp */

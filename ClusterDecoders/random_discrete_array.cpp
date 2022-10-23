@@ -81,3 +81,7 @@ float random_discrete_array::total_prob() {
     }
     return R;
 }
+
+int random_discrete_array::get_prob_index(int i) {
+    return index_to_prob[i];
+}
