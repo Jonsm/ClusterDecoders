@@ -52,6 +52,7 @@
 		5277B16B2784ED7100EED4FE /* sierpinski_sublattice.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = sierpinski_sublattice.hpp; sourceTree = "<group>"; };
 		5277B16D2784EDD800EED4FE /* gaussian_elimination.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = gaussian_elimination.cpp; sourceTree = "<group>"; };
 		5277B16E2784EDD800EED4FE /* gaussian_elimination.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = gaussian_elimination.hpp; sourceTree = "<group>"; };
+		52788EF629624F3700639E1A /* citation.cff */ = {isa = PBXFileReference; lastKnownFileType = text; path = citation.cff; sourceTree = "<group>"; };
 		FC4970E926CB063A000724A3 /* bias_correction_helper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = bias_correction_helper.cpp; sourceTree = "<group>"; };
 		FC4970EA26CB063A000724A3 /* bias_correction_helper.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = bias_correction_helper.hpp; sourceTree = "<group>"; };
 		FC4970ED26D2E0AF000724A3 /* random_discrete_array.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = random_discrete_array.cpp; sourceTree = "<group>"; };
@@ -113,6 +114,7 @@
 		FCF6370126BB12670021EFB9 = {
 			isa = PBXGroup;
 			children = (
+				52788EF629624F3700639E1A /* citation.cff */,
 				FCDEDF0626E59EA700FD1764 /* README.md */,
 				FCF6370C26BB12670021EFB9 /* ClusterDecoders */,
 				FCF6370B26BB12670021EFB9 /* Products */,
